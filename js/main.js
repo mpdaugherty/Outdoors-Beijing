@@ -1,4 +1,4 @@
 $(document).ready(function () {
-	$('h2').hide();
-	$('h2').show(500);
+	$('.pollutantHistory').hide();
+	$('.sparkline').show().sparkline('html');
 });

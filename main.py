@@ -23,6 +23,7 @@ class MainPage(webapp.RequestHandler):
         self.response.out.write('<link rel="stylesheet" href="stylesheets/main.css" type="text/css" />');
         self.response.out.write("<script src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js\" type=\"text/javascript\"></script>");
         self.response.out.write("<script src=\"js/main.js\" type=\"text/javascript\"></script>");
+        self.response.out.write("<script src=\"js/jquery.sparkline.min.js\" type=\"text/javascript\"></script>");
         self.response.out.write("</head>")
 
         self.response.out.write("<body>")
@@ -38,7 +39,8 @@ class MainPage(webapp.RequestHandler):
         pm2Query.order("-date")
         pm2Query.filter("type = ", pollutant)
         pm2Status = pm2Query.get()
-        
+        lastDayStatuses = pm2Query.fetch(24)        
+
         htmlReturnValue = '<h2><span class="pollutantName">'
         htmlReturnValue += pollutant
         htmlReturnValue += "</span>"
@@ -46,25 +48,39 @@ class MainPage(webapp.RequestHandler):
         htmlReturnValue += str(pm2Status.date)
         htmlReturnValue += ')</span>'
         htmlReturnValue += "</h2><div><em>"+pm2Status.description+"</em></div>"
-        htmlReturnValue += "<div>Concentration: <span>"+str(pm2Status.concentration)+"</span></div>"
-        htmlReturnValue += "<div>AQI: <span>"+str(pm2Status.aqi)+"</span></div>"
+
+        htmlReturnValue += "<div>Concentration: <span>"+str(pm2Status.concentration)+"</span>"
+        htmlReturnValue += '<span class="sparkline">'
+        for status in reversed(lastDayStatuses):
+            htmlReturnValue += str(status.concentration) + ','
+        # Cut off the last, extra comma and continue
+        htmlReturnValue = htmlReturnValue[:-1] + '</span>'
+        htmlReturnValue += '</div>'
+
+        htmlReturnValue += "<div>AQI: <span>"+str(pm2Status.aqi)+"</span>"
+        htmlReturnValue += '<span class="sparkline">'
+        for status in lastDayStatuses):
+            htmlReturnValue += str(status.aqi) + ','
+        # Cut off the last, extra comma and continue
+        htmlReturnValue = htmlReturnValue[:-1] + '</span>'
+        htmlReturnValue += '</div>'
 
         # Next, add a table with the data on this pollutant from the last 24 hours.
-        lastDayStatuses = pm2Query.fetch(24)
-
+        # If people don't have javascript enabled, this will show up for them instead of
+        # the sparklines.
         htmlReturnValue += '<table class="pollutantHistory"/>'
         htmlReturnValue += '<tr><td></td>'
-        for status in lastDayStatuses:
+        for status in reversed(lastDayStatuses):
             htmlReturnValue += '<th>' + str(status.date) + '</th>'
         htmlReturnValue += '</tr>'
 
         htmlReturnValue += '<tr><th>Concentration</th>'
-        for status in lastDayStatuses:
+        for status in reversed(lastDayStatuses):
             htmlReturnValue += '<td>' + str(status.concentration) + '</td>'
         htmlReturnValue += '</tr>'
 
         htmlReturnValue += '<tr><th>AQI</th>'
-        for status in lastDayStatuses:
+        for status in reversed(lastDayStatuses):
             htmlReturnValue += '<td>' + str(status.aqi) + '</td>'
         htmlReturnValue += '</tr>'
         htmlReturnValue += '</table>'
