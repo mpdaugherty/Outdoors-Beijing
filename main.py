@@ -1,4 +1,4 @@
-import cgi, urllib, os, datetime
+import cgi, urllib, os, datetime, logging
 import simplejson
 
 from google.appengine.ext.webapp import template
@@ -56,8 +56,15 @@ class UpdateStatusFromTwitter(webapp.RequestHandler):
                 description = statusArray[i+3],
                 concentration = float(statusArray[i+1]),
                 aqi = int(statusArray[i+2]))
-            newPollutantStatus.put()
-        self.response.out.write("Updated")
+
+            # Ensure that we aren't accidentally adding a duplicate status to
+            # the database
+            if PollutantStatus.gql("WHERE type = :1 AND date = :2", newPollutantStatus.type, newPollutantStatus.date).count() < 1:
+                newPollutantStatus.put()
+            else:
+                self.response.out.write("Duplicate status detected<br />")
+                logging.info("Duplicate status detected: "+newPollutantStatus.type+" "+str(newPollutantStatus.date));
+        self.response.out.write("Updated with "+status)
 
 application = webapp.WSGIApplication(
                                      [('/', MainPage),
