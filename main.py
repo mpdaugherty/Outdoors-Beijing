@@ -30,7 +30,7 @@ class MainPage(webapp.RequestHandler):
         pm2Query.filter("type = ", pollutant)
         pm2Status = pm2Query.get()
         
-        htmlReturnValue = "<h2>"+pollutant+"</h2><div><em>"+pm2Status.description+"</em></div>"
+        htmlReturnValue = "<h2>"+pollutant+" - "+str(pm2Status.date)+"</h2><div><em>"+pm2Status.description+"</em></div>"
         htmlReturnValue += "<div>Concentration: <span>"+str(pm2Status.concentration)+"</span></div>"
         htmlReturnValue += "<div>AQI: <span>"+str(pm2Status.aqi)+"</span></div>"
 
