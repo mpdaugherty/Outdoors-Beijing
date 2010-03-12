@@ -1,4 +1,4 @@
 cron:
 - description: update status from twitter
   url: /tasks/updateStatus
-  schedule: every 1 hours
+  schedule: every 30 minutes
