@@ -38,32 +38,34 @@ class MainPage(webapp.RequestHandler):
 
 class UpdateStatusFromTwitter(webapp.RequestHandler):
     def get(self):
-        status = twitter.getStatus()
-        # Example status: "03-05-2010; 13:00; PM2.5; 17.0; 55; Moderate // Ozone; 43.3; 36; Good"
-        statusArray = status.split(";")
-        statusArray.insert(5, statusArray[5].split("//")[0])
-        statusArray[6] = statusArray[6].split("//")[1]
-        statusArray = map((lambda str: str.strip()),statusArray)
-        year = int(statusArray[0].split("-")[2])
-        day = int(statusArray[0].split("-")[1])
-        month = int(statusArray[0].split("-")[0])
-        hour = int(statusArray[1][0:2])
-        updateDateTime = datetime.datetime(year, month, day, hour)
-        for i in range(2, len(statusArray), 4):
-            newPollutantStatus = PollutantStatus(
-                type = statusArray[i],
-                date = updateDateTime,
-                description = statusArray[i+3],
-                concentration = float(statusArray[i+1]),
-                aqi = int(statusArray[i+2]))
+        statuses = twitter.getRecentStatuses()
 
-            # Ensure that we aren't accidentally adding a duplicate status to
-            # the database
-            if PollutantStatus.gql("WHERE type = :1 AND date = :2", newPollutantStatus.type, newPollutantStatus.date).count() < 1:
-                newPollutantStatus.put()
-            else:
-                self.response.out.write("Duplicate status detected<br />")
-                logging.info("Duplicate status detected: "+newPollutantStatus.type+" "+str(newPollutantStatus.date));
+        for status in statuses:
+            # Example status: "03-05-2010; 13:00; PM2.5; 17.0; 55; Moderate // Ozone; 43.3; 36; Good"
+            statusArray = status.split(";")
+            statusArray.insert(5, statusArray[5].split("//")[0])
+            statusArray[6] = statusArray[6].split("//")[1]
+            statusArray = map((lambda str: str.strip()),statusArray)
+            year = int(statusArray[0].split("-")[2])
+            day = int(statusArray[0].split("-")[1])
+            month = int(statusArray[0].split("-")[0])
+            hour = int(statusArray[1][0:2])
+            updateDateTime = datetime.datetime(year, month, day, hour)
+            for i in range(2, len(statusArray), 4):
+                newPollutantStatus = PollutantStatus(
+                    type = statusArray[i],
+                    date = updateDateTime,
+                    description = statusArray[i+3],
+                    concentration = float(statusArray[i+1]),
+                    aqi = int(statusArray[i+2]))
+                
+                # Ensure that we aren't accidentally adding a duplicate status to
+                # the database
+                if PollutantStatus.gql("WHERE type = :1 AND date = :2", newPollutantStatus.type, newPollutantStatus.date).count() < 1:
+                    newPollutantStatus.put()
+                else:
+                    self.response.out.write("Duplicate status detected<br />")
+                    logging.info("Duplicate status detected: "+newPollutantStatus.type+" "+str(newPollutantStatus.date));
         self.response.out.write("Updated with "+status)
 
 application = webapp.WSGIApplication(
