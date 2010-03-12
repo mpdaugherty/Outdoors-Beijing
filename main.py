@@ -49,6 +49,26 @@ class MainPage(webapp.RequestHandler):
         htmlReturnValue += "<div>Concentration: <span>"+str(pm2Status.concentration)+"</span></div>"
         htmlReturnValue += "<div>AQI: <span>"+str(pm2Status.aqi)+"</span></div>"
 
+        # Next, add a table with the data on this pollutant from the last 24 hours.
+        lastDayStatuses = pm2Query.fetch(24)
+
+        htmlReturnValue += '<table class="pollutantHistory"/>'
+        htmlReturnValue += '<tr><td></td>'
+        for status in lastDayStatuses:
+            htmlReturnValue += '<th>' + str(status.date) + '</th>'
+        htmlReturnValue += '</tr>'
+
+        htmlReturnValue += '<tr><th>Concentration</th>'
+        for status in lastDayStatuses:
+            htmlReturnValue += '<td>' + str(status.concentration) + '</td>'
+        htmlReturnValue += '</tr>'
+
+        htmlReturnValue += '<tr><th>AQI</th>'
+        for status in lastDayStatuses:
+            htmlReturnValue += '<td>' + str(status.aqi) + '</td>'
+        htmlReturnValue += '</tr>'
+        htmlReturnValue += '</table>'
+
         return htmlReturnValue
 
 class UpdateStatusFromTwitter(webapp.RequestHandler):
