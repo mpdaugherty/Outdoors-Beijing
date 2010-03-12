@@ -18,7 +18,11 @@ class PollutantStatus(db.Model):
 
 class MainPage(webapp.RequestHandler):
     def get(self):
-        self.response.out.write("<html><body>")
+        self.response.out.write("<html>")
+        self.response.out.write("<head><title>Beijing Air Status</title>");
+        self.response.out.write("<script src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js\" type=\"text/javascript\"></script>");
+        self.response.out.write("</head>")
+        self.response.out.write("<body>")
         self.response.out.write("<h1>Beijing Air Status</h1>")
         self.response.out.write(self.getCurrentPollutantHTML("PM2.5"))
         self.response.out.write(self.getCurrentPollutantHTML("Ozone"))
