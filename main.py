@@ -20,13 +20,18 @@ class MainPage(webapp.RequestHandler):
     def get(self):
         self.response.out.write("<html>")
         self.response.out.write("<head><title>Beijing Air Status</title>");
+        self.response.out.write('<link rel="stylesheet" href="stylesheets/main.css" type="text/css" />');
         self.response.out.write("<script src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js\" type=\"text/javascript\"></script>");
+        self.response.out.write("<script src=\"js/main.js\" type=\"text/javascript\"></script>");
         self.response.out.write("</head>")
+
         self.response.out.write("<body>")
+        self.response.out.write('<div id="PageContainer">')
         self.response.out.write("<h1>Beijing Air Status</h1>")
         self.response.out.write(self.getCurrentPollutantHTML("PM2.5"))
         self.response.out.write(self.getCurrentPollutantHTML("Ozone"))
-        self.response.out.write("</body></html>");
+        self.response.out.write('</div>')
+        self.response.out.write("</body></html>")
 
     def getCurrentPollutantHTML(self, pollutant):
         pm2Query = PollutantStatus.all()

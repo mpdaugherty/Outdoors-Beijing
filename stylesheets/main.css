@@ -1,0 +1,10 @@
+#PageContainer
+{
+  width:50%;
+  margin:auto;
+}
+
+#PageContainer>h1
+{ 
+  text-align:center;
+}
