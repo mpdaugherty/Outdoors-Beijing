@@ -59,7 +59,7 @@ class MainPage(webapp.RequestHandler):
 
         htmlReturnValue += "<div>AQI: <span>"+str(pm2Status.aqi)+"</span>"
         htmlReturnValue += '<span class="sparkline">'
-        for status in lastDayStatuses):
+        for status in reversed(lastDayStatuses):
             htmlReturnValue += str(status.aqi) + ','
         # Cut off the last, extra comma and continue
         htmlReturnValue = htmlReturnValue[:-1] + '</span>'
