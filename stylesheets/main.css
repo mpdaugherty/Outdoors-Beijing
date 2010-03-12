@@ -24,3 +24,10 @@ h2
 {
   display:none;
 }
+
+#About
+{
+  margin: 50px auto;
+  font-size: small;
+  width: 75%;
+}

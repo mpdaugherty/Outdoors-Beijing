@@ -32,6 +32,12 @@ class MainPage(webapp.RequestHandler):
         self.response.out.write(self.getCurrentPollutantHTML("PM2.5"))
         self.response.out.write(self.getCurrentPollutantHTML("Ozone"))
         self.response.out.write('</div>')
+
+        self.response.out.write('<div id="About">')
+        self.response.out.write('<h3>About this page:</h3>')
+        self.response.out.write('<p>For information on how to understand these numbers, check out <a href="http://www.airnow.gov/index.cfm?action=aqibasics.aqi">www.airnow.gov</a>.</p><p>Data is generously provided by <a href="http://twitter.com/beijingair">BeijingAir</a>.  Follow them on Twitter and thank them.  Sparklines created with <a href="http://omnipotent.net/jquery.sparkline/">jQuery Sparklines</a>.  Page created by <a href="http://blog.mpdaugherty.com">Michael P. Daugherty</a>.</p><p>OutdoorsBeijing is open source; check out our <a href="http://github.com/mpdaugherty/Outdoors-Beijing">Git Repository</a>.</p>')
+        self.response.out.write('</div>')
+
         self.response.out.write("</body></html>")
 
     def getCurrentPollutantHTML(self, pollutant):
